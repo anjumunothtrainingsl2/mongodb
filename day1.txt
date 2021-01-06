@@ -1,0 +1,118 @@
+PSS
+
+SS finished syncing -- delete the oplog entries 
+
+min oplog retention period -- hours
+
+slaveReplicationLag
+
+write op  --> primary
+Mongodb driver --- inbuilt retry mechanism
+1. primary has done the write op  -- down
+sec async sync
+
+write concern : 1,2,3 , majority
+
+PSSSS
+writeconcern 1: Primary -- client success
+writeconcern 2: Primary and a sec -- client success
+writeconcern majority 3: PSS --client success
+
+
+chance of loss of write op -- primary down
+Journal in mongodb  -- configurable
+loss -- min
+
+ 
+
+
+	 
+2. primary has not completed the op(update 50 doc -- 25 doc)
+1.retry mongodb driver 
+2. journal -- ops done on the primary  metadata
+3. write concern
+
+
+PSS
+
+Primary(n1) -- down
+election process
+N2 primary
+Once n1 -- up -- secondary 
+
+Election Take place:1
+1. Set up my replica set
+2. When primary down
+3. Change the config of replica set
+
+Node in replica set -- 
+Priority(0 to any integer value), 
+Vote - Yes, No
+
+Replica set --- 50 nodes;(7 are eligible to vote)
+Priority - 0 ; cannot become a primary
+priority - 1,2, 3, 4
+
+
+7 node structure 
+Election Process
+1. Sec node which has the highest priority(non zero)
+2. Which has been a primary earlier
+3. replication lag (synched with the primary latest)
+4. Round robin
+
+PSS 
+2sec heartbeat exchange
+10 sec - no heartbeat -- that node is down
+If primary is down -- election -- 12 sec 
+
+22 sec -- max a write op may fail 
+
+readPreference:
+Primary
+Secondary
+Primary prefered
+Sec prefered
+nearest
+
+
+Secondary nodes:
+1. Normal sec node
+2. Zero priority sec node -- cannot be primary  
+-- read (frequent scale ups and scale downs)
+-- reduce the number of participants in the election
+-- node in a particular location which should never become a primary
+
+
+3. Arbiter 
+-- will not have replicated data
+-- priority - zero 
+-- Eligible to vote
+-- Election process  -- tie -
+
+4. Hidden member  -- not visible to the app(no writes , no reads)
+-- Priority -- 0
+-- vote -- yes/no
+-- sec member -- replication-- sync from the primary
+-- Backup; 
+
+5. Delayed member 
+sync with the primary after a delay(sec) slaveDelay:
+-- priority -- 0
+-- vote  -- yes/no
+-- DR; rollback is not there in mongodb 
+-- chainingAllowed -- true 
+	node can sync with another fully synced sec also
+
+max retention period -- 12 hours
+delayed member -- < max retention period
+slaveReplicationlag -sec 
+
+
+
+
+
+ 
+
+
+

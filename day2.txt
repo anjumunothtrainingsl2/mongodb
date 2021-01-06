@@ -1,0 +1,191 @@
+Emp-- EmpId(1 to 10000), EmpName,salary
+
+3 shards
+
+Range based sharding
+Hash based sharding
+
+Shard key
+Range based sharding
+
+Config server
+S1-->min key to 3000; 
+S2-->3001 to 6000; 
+S3-->6001 to max key; 
+
+select * from emp where empId=2500
+
+query--> mongos--> config server---> reply S1 --> mongos --> S1 --> fetch info --> return API
+
+select * from emp where empId>2500 and empId < 5000
+
+query--> mongos--> config server---> reply S1,S2 --> mongos --> S1 --> fetch info ; --> S2 fetch info; --->Mongos merge the data--> return API
+
+select * from emp where empName="TOM"
+
+query--> mongos --> broadcast the query to all the shards--> shards will give the data--> mongos--> merge the data--> return to API -- > costly affair -->
+
+
+Collection 1 lakh records
+
+Sharded collection - 4 shards - 25000 rec in each shard
+
+select * from emp where empName="TOM"
+1. Scan 1 lakh records -- 20 sec
+2. Scan 25k rec parallely -- 5 sec  -- 5 sec ; 10 sec
+
+Shard1
+PSS
+25k; 25k; 25k
+
+Shards
+There are many Chunks in a single shard
+
+Many documents(1 to n ) together form a single chunk(64mb)
+Jumbo chunk
+
+insert into emp values(1)...
+insert into emp values(3001)...
+
+insert into emp values(5500)
+
+Write concern for replica set in s1: 1,2,3 majority
+PSS majority - 2 nodes(PS)
+
+query -- mongos --config server -- (1 in shard1) -- shard1--> insert-->--> 2 nodes have completed the write op--> status to mongos
+--> successful --> update the config server -- update to api
+--> failure --> update to api
+
+
+s1 and s2 have more doc than s3
+
+Load balancing
+
+Inbuilt balancer -- config server -- migration 
+migration threshold 
+Splitting up of chunks - manual ; automatic
+
+s1 -- min key  to 2000
+s2 -- 2000 to 4000
+s3 -- 4000 to max key
+
+
+
+continue the same for 1 to 3000 for s1
+
+insert into emp values(3001)...
+query -- mongos --config server -- (1 in shard2) -- shard2--> insert--> status 
+--> successful --> update the config server -- update to api
+--> failure --> update to api
+
+
+db --> db
+table --> collection
+rec--> document
+
+db.emp.insert({"empId":101,empName:"Sara",salary:879.90})
+
+select * from emp
+db.emp.find()
+
+1. db.emp.insert({empId:104})
+2. db.emp.insert({empName:"Harry"}); 
+	//empId: will not be there; salary:not exists
+	2 fields;
+	
+3. db.emp.insert({studName:"Harry"}); 
+
+4. db.Emp.find({_id:104})
+
+5. db.emp.insert([{empId:1101,empName:"Asha",salary:1001,deptId:"D1"},{empId:1102,empName:"Gaurav",salary:2000,deptId:"D1"},{empId:1103,empName:"Karan",salary:2000,deptId:"D2"},
+{empId:1104,empName:"Kishan",salary:3000,deptId:"D1"},
+{empId:1105,empName:"Keshav",salary:3500,deptId:"D2"},
+{empId:1106,empName:"Pran",salary:4000,deptId:"D3"},
+{empId:1107,empName:"Saurav",salary:3800,deptId:"D3"}])
+
+
+Find
+
+db.emp.find(); // return all docs with all fields
+
+select * from emp where empId=101
+db.emp.find({empId:101})
+
+select * from emp where empId>101
+db.emp.find({empId:{$gt:101}})
+
+select * from emp where empId<110
+db.emp.find({empId:{$lt:101}})
+
+$gt, $lt, $lte, $gte, $ne, $eq
+
+$and, $or, $not
+
+select * from emp where empId>104 and salary >1000
+
+db.emp.find(
+{$and:[{empId:{$gt:104}},{salary:{$gt:1000}}]
+}
+)
+
+select * from emp where empId>104 or salary >1000
+db.emp.find(
+{$or:[{empId:{$gt:104}},{salary:{$gt:1000}}]
+}
+)
+
+Between , in ,like
+db.emp.find({salary:{$gt:2000,$lt:3000}})
+
+db.emp.find({empId:{$in:[101,103,105]}})
+
+regular expressions
+pattern ://
+db.emp.find({empName:/^G/})
+
++, ? *
+? 1 char
++ 1 or more char
+* 0 or more char
+
+/go?d/
+	god
+/go*d/
+	gd, god, good,goooood,hgoodkjl
+
+/go+d/
+	god,good,gooooood
+
+/[A]/
+
+$exists
+$type
+
+mongod.conf
+
+compass
+studio3t
+robo3t
+
+restaurant.txt
+zipcodeData.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
