@@ -1,0 +1,320 @@
+12 docs
+db.emp.find().limit(5);// print the first 5 101 to no fields
+db.emp.find().skip(5);// 7 docs 105 to 112
+
+db.emp.find().limit(5).skip(5) ;// 5 docs (105 to 110)
+
+db.emp.find().skip(5).limit(5);// 105 to 112(7 docs); 5 docs(105 to 110)
+https://github.com/anjumunothtrainingsl2/mongodb.git
+
+db.emp.update({empId:101},{$set:{empName:"James"}})
+
+db.emp.update({empId:101},{$set:{deptId:"D1"}})
+
+db.emp.update({salary:678},{$set:{empName:"Chitra",deptId:"D2"}})
+// update 1 doc ; 
+
+// update multiple docs
+db.emp.update({salary:678},{$set:{empName:"Chitra",deptId:"D2"}},{multi:true})
+
+db.emp.updateMany({salary:678},{$set:{empName:"Chitra",deptId:"D2"}})
+
+db.emp.updateOne()
+
+db.emp.update({empId:999},{$set:{empName:"Karan"}})
+
+// for upsert
+db.emp.update({empId:999},{$set:{empName:"Karan"}},{upsert:true})
+
+update emp set salary=salary+100 where empid=101
+db.emp.update({empId:101},{$inc:{salary:100}})
+
+db.emp.update({empId:101},{$inc:{salary:-100}})
+
+update emp set salary=salary*.5 where empid=101
+
+db.emp.update({empId:101},{$mul:{salary:.5})
+
+
+db.getCollection('emp').find({})
+
+db.emp.updateOne({salary:{$gt:1000}},{$set:{deptId:"D3"}})
+
+db.emp.update({empId:{$in:[105,108]}},{$unset:{empName:1}},{multi:true})
+
+
+db.emp.update({empId:{$in:[105,108]}},{$set:{hobbies:["h1","h2","h3"]}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:"h1"}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:"h2"}},{multi:true})
+
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:"h2"}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:["h3","h4"]}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:{$each:["h5","h6"]}}},{multi:true})
+
+
+select sum(pop) from zipcode where pop > 1000 group by state
+1. from zipcode
+2. where clause --- match stage
+3. group by  -- group
+4. select clause  -- project
+
+select sum(pop) from zipcode where pop > 1000 group by state having sum(pop) >10000
+1. from zipcode
+2. where clause --- match stage
+3. group by  -- group
+4. having clause  -- match
+5. select clause  -- project
+
+
+select sum(pop) from zipcode group by state,city
+1. from zipcode
+2. $group
+
+
+$sort
+
+$limit
+$skip
+
+https://github.com/anjumunothtrainingsl2/mongodb.git
+
+db.emp.update({empId:101},{$set:{empName:"James"}})
+
+db.emp.update({empId:101},{$set:{deptId:"D1"}})
+
+db.emp.update({salary:678},{$set:{empName:"Chitra",deptId:"D2"}})
+// update 1 doc ; 
+
+// update multiple docs
+db.emp.update({salary:678},{$set:{empName:"Chitra",deptId:"D2"}},{multi:true})
+
+db.emp.updateMany({salary:678},{$set:{empName:"Chitra",deptId:"D2"}})
+
+db.emp.updateOne()
+
+db.emp.update({empId:999},{$set:{empName:"Karan"}})
+
+// for upsert
+db.emp.update({empId:999},{$set:{empName:"Karan"}},{upsert:true})
+
+update emp set salary=salary+100 where empid=101
+db.emp.update({empId:101},{$inc:{salary:100}})
+
+db.emp.update({empId:101},{$inc:{salary:-100}})
+
+update emp set salary=salary*.5 where empid=101
+
+db.emp.update({empId:101},{$mul:{salary:.5})
+
+$max, $min, $rename, $unset
+
+
+db.getCollection('emp').find({})
+
+db.emp.updateOne({salary:{$gt:1000}},{$set:{deptId:"D3"}})
+
+db.emp.update({empId:{$in:[105,108]}},{$unset:{empName:1}},{multi:true})
+
+
+db.emp.update({empId:{$in:[105,108]}},{$set:{hobbies:["h1","h2","h3"]}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:"h1"}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:"h2"}},{multi:true})
+
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:"h2"}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:["h3","h4"]}},{multi:true})
+
+db.emp.update({empId:{$in:[101,102]}},{$push:{hobbies:{$each:["h5","h6"]}}},{multi:true})
+
+mongod --dbpath "/home/admin/Desktop/sample1" -f /etc/mongod.conf
+
+In mongod.conf
+
+bind-ip: new ip address
+
+#error: unable to link socket file
+
+/tmp/mongodb-lock.**
+ delete this file
+ 
+Permissions for the files:(dbpath, logfile,)
+777
+
+
+db.emp.deleteMany({empId:999})
+
+db.emp.deleteMany({});// delete all docs
+
+db.emp.deleteOne({});//delete the first doc
+
+
+select sum(salary) "SumOfSalary" from emp
+db.emp.aggregate([
+{$group:
+{
+	_id:null,
+  "SumOfSalary":{$sum:"$salary"}
+}
+}
+])
+
+
+db.emp.aggregate([
+{$group:
+{
+	_id:null,
+  "SumOfSalary":{$sum:"$salary"}
+}
+},
+{$project:
+{_id:0}
+}
+])
+
+
+db.emp.aggregate([{$group: {
+  _id: "$deptId",
+  "SumOfSalary": {
+    $sum: "$salary"
+  }
+}}, {$project: {
+  _id:0,
+  "SumOfSalary":1,
+  "SumOfSalaryInInt":{$ceil:"$SumOfSalary"},
+  "Department Id":"$_id"
+}}])
+
+
+db.zipcode.aggregate([{$group: {
+  _id: "$state",
+  "SumOfPop": {
+    $sum: "$pop"
+  }
+}}, {$project: {
+  _id:0,
+  "state":"$_id",
+  "SumOfPop":1,
+
+  }}])
+  
+  
+  
+  db.zipcode.aggregate([{$match: {
+  pop:{$gt:1000}
+}}, {$group: {
+  _id: "$state",
+  "SumOfPop": {
+    $sum: "$pop"
+  }
+}}, {$project: {
+  _id:0,
+  "state":"$_id",
+  "SumOfPop":1,
+
+  }}])
+
+
+db.zipcode.aggregate([{$match: {
+  pop:{$gt:1000}
+}}, {$group: {
+  _id: "$state",
+  "SumOfPop": {
+    $sum: "$pop"
+  }
+}}, {$match: {
+  "SumOfPop":{$gt:10000}
+}}, {$project: {
+  _id:0,
+  "state":"$_id",
+  "SumOfPop":1,
+
+  }}])
+  
+  
+db.zipcode.aggregate([{$group: {
+  _id:{f1:"$state",f2:"$city"},
+  "SumOfPop": {
+    $sum: "$pop"
+  }
+}}, {$project: {
+  _id:0,
+  "SumOfPop":1,
+  "state":{$toLower:"$_id.f1"},
+  "city":"$_id.f2",
+  "StateCityConcat":{$concat:["$_id.f1","_","$_id.f2"]}
+}}, {}])
+  
+  
+  
+db.zipcode.aggregate([{$group: {
+  _id:{f1:"$state",f2:"$city"},
+  "SumOfPop": {
+    $sum: "$pop"
+  }
+}}, {$project: {
+  _id:0,
+  "SumOfPop":1,
+  "state":{$toLower:"$_id.f1"},
+  "city":"$_id.f2",
+  "StateCityConcat":{$concat:["$_id.f1","_","$_id.f2"]}
+}}, {$sort: {
+  "SumOfPop":-1
+}}, {$skip: 5}])
+
+
+db.zipcode.aggregate([{$collStats: {
+  latencyStats: {
+    histograms: true
+  },
+  storageStats: {},
+}}, {$out: 'ZipCodeStatistics'}])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
