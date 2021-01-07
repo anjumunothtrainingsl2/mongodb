@@ -1,0 +1,153 @@
+1.db.restaurant.find({cuisine:"American"}); // yes
+
+2. db.restaurant.find({cuisine:"American",borough:"Bronx"});// yes
+
+3. db.restaurant.find({"borough":"Bronx",cuisine:"American"});//no
+
+4. db.restaurant.find({"borough":"Bronx"});// no(not the leading field in the compound index)
+
+5. db.restaurant.find().sort({cuisine:1});//yes
+
+6. db.restaurant.find().sort({borough:1});//no(not the leading field in the compound index; order is different)
+
+7. db.restaurant.find().sort({cuisine:1,borough:-1});//yes
+
+8. db.restaurant.find().sort({cuisine:-1,borough:1});// no(order is diff)
+
+9. db.restaurant.find().sort({cuisine:1,borough:1});;//no
+
+American
+Bronx, b1,b2
+
+Chinese
+b1,B2,b3
+
+https://github.com/anjumunothtrainingsl2/mongodb
+
+{$and:[{cuisine:"Hamburgers"},{restaurant_id:"30075445"}]}
+
+
+db.zipcode.find({loc:[-72.622739,42.070206]}).explain()
+
+hidden index
+
+Instead the dropping the i
+Single field
+	restaurant_id
+  loc(zipcode)
+  embeddedd adoc address(restaurant)
+  address.zipcode 
+  
+  
+1.db.restaurant.find({cuisine:"American"}); // yes;
+
+2. db.restaurant.find({cuisine:"American",borough:"Bronx"});// yes
+
+3. db.restaurant.find({"borough":"Bronx",cuisine:"American"});//yes
+
+4. db.restaurant.find({"borough":"Bronx"});// no(not the leading field in the compound index)
+
+5. db.restaurant.find().sort({cuisine:1});//yes
+
+6. db.restaurant.find().sort({borough:1});//no(not the leading field in the compound index; )
+
+7. db.restaurant.find().sort({cuisine:1,borough:-1});//yes
+
+8. db.restaurant.find().sort({cuisine:-1,borough:1});// yes(order is diff but its the exact reverse)
+
+9. db.restaurant.find().sort({cuisine:1,borough:1});;//no
+db.restaurant.find().sort({cuisine:-1,borough:-1});;//no
+
+Compound index, simple index
+db.restaurant.find({cuisine:"American"}); // Ci, Si
+
+2 plans;
+winning plan : SI
+rejected plan: CI
+
+
+index key pattern
+
+db.restaurant.createIndex({cuisine:1,borough:-1})
+
+db.restaurant.find({cuisine:"American "}).hint({cuisine:1,borough:-1})
+
+
+
+db.restaurant.insert({cuisine:"Indian"})
+{_id:   , cuisine:"Indian"}
+
+db.restaurant.insert({cuisine:"Indian",restaurant_id:null,name:"Rest1"})
+
+
+restaurant_id:null or one doc with missing field --- unique index
+
+db.ttlExample.insert([{empId:101,sesionStart:new Date()},{empId:102,sesionStart:new Date()}])
+
+db.sample2.insert([{empId:101,dd:new Date()},{empId:102,dd:new Date(2020,1,1)},{empId:103,dd:new Date(2020,1,11)},{empId:104,dd:new Date(2021,1,1)},
+{empId:105,dd:new Date(2020,1,21)}])
+
+
+db.sample2.createIndex({dd:1},{partialFilterExpression:{dd:{$gt:new Date(2020,0,1),$lt:new Date(2020,11,31)}}})
+
+sparse index on restaurant_id
+10000 docs
+3000 docs - restaurant_id
+
+normal index -- > 10000 entries
+sparse index -- > 3000 docs will be indexed
+
+sparse index(3000 docs) vs partial index(100 docs)
+1. 
+
+db.restaurant.createIndex({borough:1},{partialFilterExpression:{cuisine:"American"}})
+
+db.restaurant.find({borough:"Bronx"});//  no
+db.restaurant.find({borough:"Bronx",cuisine:"American}); yes
+
+
+select sum(pop) from zipcode group by state having avg(pop1)>1000
+
+
+India
+
+no of occurences within a single doc * weight  -- score 
+
+db.blog.insert(
+   {
+     content: "Tom is a good boy  and he has good habits",
+     keywords: "good bad ugly",
+     about: "This is a good post"
+   })
+db.blog.createIndex(
+   {
+     content: "text",
+     keywords: "text",
+     about: "text"
+   },
+   {
+     weights: {
+       content: 10,
+       keywords: 5
+     },
+     name: "TextIndex"
+   }
+ )
+
+db.blog.find({$text:{$search:"good"}}); // score : (2*10+1*5+1*1 ) 26
+
+Find all the indexes that are building
+db.adminCommand(
+    {
+      currentOp: true,
+      $or: [
+        { op: "command", "command.createIndexes": { $exists: true }  },
+        { op: "none", "msg" : /^Index Build/ }
+      ]
+    }
+)
+
+
+
+
+
