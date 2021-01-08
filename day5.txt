@@ -1,0 +1,115 @@
+3 node replica set
+
+Port -1001 data1 rs1
+1002 data2 rs1
+1003 data3 rs1
+
+mongod --dbpath "location" --port 1001 --replSet rs1
+
+mongod -f /etc/mongod1.conf
+
+replication:
+	replSetName:"rs1"
+  oplogSizeMb: 
+  enableMajorityReadConcern: boolean
+  
+  
+  rs.initiate({
+  _id:"rs1",
+  members:[
+  {_id:0,host:"localhost:1001"},
+  {_id:1,host:"localhost:1002"},
+  {_id:2,host:"localhost:1003"}]
+  })
+  
+  
+  Can a write be performed on sec -- no
+  Can a read be performed on sec -- no;yes(readPreference - sec; secpreferred)
+  
+  rs.secondaryOk()
+  
+  rs.status()
+  rs.config()
+  
+  rs.add({
+  _id:3,
+  host:"localhost:1004",
+  priority:10
+  })
+  
+  
+  Add an arbiter
+  
+  rs.addArb("localhost:1005")
+  rs.addArb({_id:4,host:"localhost:1005"})
+  
+  
+  Add a zero priority node
+  1.
+  rs.add({
+  _id:5,
+  host:"localhost:1006",
+  priority:0
+  })
+  
+  2.
+  rs.add("localhost:1006")
+  
+  var myconfig=rs.config()
+  myconfig.members[5].priority=0
+  rs.reconfig(myconfig)
+  
+  
+  1. rs.initiate()
+  2. primary goes down/unreachable
+  3. rs.reconfig()
+  4. add a new node with the highest priority
+  
+  2 sec heartbeat 
+  10 sec - no heartbeat from primary(primary down)
+  
+  Will the arbiter have the replicated data ? 
+  
+  Add a delayed member:
+  rs.add({_id:3,host:"localhost:1005",slaveDelay:300,priority:0})
+  
+  
+  
+  Node 1  -- shutdown 30 min
+  
+  restart the node1
+  mongod -f / --replSet rs1
+  
+  Sync with primary or fully synched sec
+  
+  
+  
+
+  
+  Add a hidden member
+  
+  rs.add({_id:4,host:"localhost:1005","hidden":true,priority:0})
+  
+  
+  
+  
+  var myconfig=rs.config()
+  myconfig.settings.heartbeatTimeoutSecs=300
+  rs.reconfig(myconfig)
+  
+rs.printReplicationInfo()
+
+rs.printSlaveReplicationInfo()
+
+  db.getCollection('emp').find({})
+
+
+rs.config()
+// Shut down the server 
+rs.remove("localhost:1002")
+
+
+  
+  
+  
+  
