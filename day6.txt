@@ -1,0 +1,205 @@
+Primary Oplog
+
+Secondary n2 Oplog
+secondary n3 Oplog
+
+n2 sync with the primary
+  copy the oplog entries(based on the timestamp) in the primary into its secondary oplog
+  exceute the entries which it has copied on the data which it has  
+
+Processes --> user(query); mongod process(index build)
+
+db.currentOp()
+Current operations running as part of the server
+
+Detailed info user; query; excution plan; time for running
+Profiler
+
+mongostat
+mongotop
+
+Sharding:
+
+Config server 
+PSS
+2001; 2002; 2003
+srs1
+configsvr
+
+Shards
+Shard 1 PSS ; 2004;2005;2006 --- shard1rs;  shardsvr
+Shard 2 PSS; 2007; 2008; 2009 --- shard2rs; shardsvr
+
+mongos 2010
+
+1. Range based sharding on _id  ; _id -- present all the docs; range based sharding
+2. Hashed based sharding on state,city; {state,city}; 
+repetitive data for state and city; to avoid uneven distribution chunks 
+3. Hashed sharding on state: 
+
+
+1000 queries
+_id; 500; 500 (shard(s)); broadcast - 500
+state; 100; particular shard - 100; braodcast -- 900
+city; 100;particular shard - 100; braodcast -- 900
+state and city; 200; particular 200; broadcast - 800
+
+
+ Insert 20 docs(15mb) _id: 1  to 20;
+
+{ "_id" : { "$minKey" : 1 } } -->> { "_id" : "01376" } on : shard1rs Timestamp(2, 0) 
+                        { "_id" : "01376" } -->> { "_id" : "18818" } on : shard2rs Timestamp(2, 2) 
+                        { "_id" : "18818" } -->> { "_id" : { "$maxKey" : 1 } } on : shard2rs Timestamp(2, 3) 
+
+try to insert in chunk 1
+300 mb of data into chunk1(60mb)
+auto split
+5 chunks will be created on shard1 ; chunk migration 
+3 chunks(shard1 - 1; shard2 2);
+shard1 6 ; shard 2- 2 chunks
+migration
+4 chunks will be moved to shard2
+shard1-4 ; shard2 -4
+
+
+shard key on sparse field
+mongodb 4.2  -- no; each doc should have shard key; shard key - immutable; shard key -- change it-- no
+4.4 ; null ; yes ; chunk shard key rest_id :null ; shard key - mutable; shard key -- refine ; add an additional field as part of shard key 
+
+
+sharding architecture:
+mongos - stateless router
+config server
+shard server -- data
+balancer
+splitting; migrations
+
+sharded collection -- unshard -- no(unshard); yes(inc or dec the number of shards)
+drop the collection and recreate the collection
+
+4 shards;S1,s2,s3,s4; remove s4
+1. balancer - stop
+2. move all chunks which s4 to some other s3
+3. sh.removeShard("s4/localhost:100")
+4. start balancer;
+5. chunk migrartions -- if necessary
+
+3 shards -- yes
+
+
+broadcast/ particular shard
+
+back up of a sharded cluster
+1. balancer -- stop;
+2. 
+
+backup deamon
+Mongodb ops manager -- automatic backup -- set up each day, 2 days 
+
+Config server 
+PSS
+2001; 2002; 2003
+srs1
+configsvr
+
+Shards
+Shard 1 PSS ; 2004;2005;2006 --- shard1rs;  shardsvr
+Shard 2 PSS; 2007; 2008; 2009 --- shard2rs; shardsvr
+
+mongos 2010
+
+Open a terminal from the sharding folder
+su
+chown mongod:mongod .
+chmod 777 .
+
+
+rs.initiate({
+_id:"srs1",
+members:[
+{_id:0,host:"localhost:2001"},
+{_id:1,host:"localhost:2002"},
+{_id:2,host:"localhost:2003"}
+]
+})
+
+rs.initiate({
+_id:"shard1rs",
+members:[
+{_id:0,host:"localhost:2004"},
+{_id:1,host:"localhost:2005"},
+{_id:2,host:"localhost:2006"}
+]
+})
+
+
+
+
+
+rs.initiate({
+_id:"shard2rs",
+members:[
+{_id:0,host:"localhost:2007"},
+{_id:1,host:"localhost:2008"},
+{_id:2,host:"localhost:2009"}
+]
+})
+
+
+Set up my mongos
+Convert command line options to YAML; mongos.conf
+
+mongos --configdb srs1/localhost:2001,localhost:2002,localhost:2003 --port 2010 --outputConfig
+Copy the output to a file and save it as mongos.conf
+
+Start ur mongos with the same conf file
+mongos -f /home/admin/Desktop/sharding/mongos.conf
+
+Now connect the mongo shell to the mongos using the following command
+
+mongo --port 2010
+sh.addShard("shard1rs/localhost:2004")
+sh.addShard("shard1rs/localhost:2005")
+sh.addShard("shard1rs/localhost:2006")
+sh.addShard("shard2rs/localhost:2007")
+sh.addShard("shard2rs/localhost:2008")
+sh.addShard("shard2rs/localhost:2009")
+
+
+ { "_id" : { "$minKey" : 1 } } -->> { "_id" : "01376" } on : shard1rs Timestamp(2, 0) 
+                        { "_id" : "01376" } -->> { "_id" : "18818" } on : shard2rs Timestamp(2, 2) 
+                        { "_id" : "18818" } -->> { "_id" : { "$maxKey" : 1 } } on : shard2rs Timestamp(2, 3) 
+
+Bson - int,floating,double
+JSON -- number
+Export , import -- collection
+back up -- server, db, collection
+
+Indexes -- export -- no
+Indexes  -- import -- (indexes for the collection); restore -- indexes will be created auto
+
+emp -- Index:{empId :1}
+
+1. export of data ;  data will be stored in json format
+2. backup ; data be backed up; meta data about the indexed will also be backed up;
+
+1. import data from the exported data -- will have to create the indexes manually
+2. restore from the backed up data; data back; indexes will be created automatically based on meta data
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+  
+
