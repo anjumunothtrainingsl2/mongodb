@@ -1,0 +1,187 @@
+mongoexport with certain queries; certain fields
+
+mongo import 
+
+1. Sharding
+	3 shards
+3 physical locations
+1 .wt ---> 3.wt files
+
+2. performance -- 
+indexes --- > .wt file move them to an external storage
+
+max limit size -- 
+.wt -- no max limit
+memory system -- data in ur mongodb
+
+
+Authentication:
+
+Username-- ravi
+password --
+authentication database-- admin
+
+role : db:emp,fujitsudb
+
+mongodb driver
+
+Built in role- database level
+custom role -- collection level
+
+unlock if user is locked
+mongodb -- user lock -- 10 times -- not there
+
+disable to user -- remove the user
+user -- remove all the roles ; user exists but will not be able to perform any actions
+
+
+replica set -- change the values of the config
+var myConfig=rs.config()
+myCon
+
+
+
+db.system.users.find.forEach(function(users) {
+   printjson(users);
+});
+
+mongod --port 4002 --dbpath /home/admin/Desktop/sampleData --directoryperdb --wiredTigerDirectoryForIndexes
+db.createUser(
+  {    user: "myUserAdmin",
+    pwd: passwordPrompt(), // or cleartext password
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]	  })
+
+
+https://docs.mongodb.com/manual/reference/method/cursor.forEach/#cursor.forEach
+
+use admin
+db.createUser(
+{user:"user1",
+pwd:passwordPrompt(),
+roles:["readWriteAnyDatabase",{role:"dbAdmin",db:"db1"}]
+})
+
+use db2
+db.createUser(
+{user:"user2",
+pwd:passwordPrompt(),
+roles:[{role:"readWrite",db:"db2"},{role:"read",db:"db1"}]
+})
+
+db.createUser(
+  {    user: "user3",
+    pwd: passwordPrompt(), // or cleartext password
+    roles: [ "dbAdminAnyDatabase" ]	  })
+
+create a user rahul with dbowner on test
+create a user with read write on test 
+
+
+delete the db2  -- temp ; create the db again
+
+user2 -- read  db1
+
+
+user 5 with readWrite to db2;
+
+created collection sample1
+dropping the user5
+
+no changes in the coll
+use db2
+db.runCommand({revokeRolesFromUser:"user2",roles:[{role:"readWrite",db:"db2"}]})
+
+db.createRole(
+   {
+     role: "myroll1",
+     privileges: [
+       { resource: { cluster: true }, actions: [ "addShard" ] },
+       { resource: { db: "config", collection: "" }, actions: [ "find", "update", "insert", "remove" ] },
+       { resource: { db: "users", collection: "usersCollection" }, actions: [ "update", "insert", "remove" ] },
+       { resource: { db: "", collection: "" }, actions: [ "find" ] }
+     ],
+     roles: [
+       { role: "read", db: "admin" }
+     ]
+   },
+   { w: "majority" , wtimeout: 5000 }
+)
+
+// Only the custom roles with respect to admin db
+db.getRoles()
+
+
+db.getRoles(
+    {
+      rolesInfo: 1,
+      showPrivileges:true,
+      showBuiltinRoles: true
+    }
+)
+
+All custom roles
+use admin
+db.system.roles.find()
+
+db.system.users.getUsers()
+
+command format  
+ddl
+
+var myUserList=db.system.users.find()
+.forEach(function(users) {
+   printjson(users);  
+});
+
+replication
+
+createUser() on primary; sec will sync auto
+
+mongo import 100 docs on primary ; sec will sync auto
+
+dev - set of users;  move to testing env
+dev --- export the db.system.users  --- users.json
+
+testing env
+create the first user who has permisssions to create other user
+create the users explicitly using the users.json file as reference
+
+
+Create a file script.js
+db.createUser()
+db.createUser()
+use test1
+db.createUser()
+use test2
+db.createUser()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+

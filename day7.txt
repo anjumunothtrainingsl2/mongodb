@@ -1,0 +1,143 @@
+chunk - set of contiguous documents in a single collection
+
+one doc can exists in only one chunk
+jumbo chunk 
+
+doc -- 16mb 
+chunk > 16mb 
+default size of 64mb-- chunk
+
+1. chunk size-10mb; doc - 12 mb;
+jumbo chunk -- indivisible chunk
+
+Backup 
+
+1. Copy the files in the dbpath 
+
+Pro and cons
+
+Easy; simple; scheduler 
+Loss of data-- copying -- write op-- inconsistent
+database ; which file 
+restore a single collection
+volume of memory 
+indexes: rebuild of indexes -- performance issue
+
+
+db1
+	emp
+	book
+
+mongodump --oplog
+
+emp backup
+indexes in emp -- backup  
+book -- backup
+indexes in book -- backup
+oplog backup 
+
+mongorestore -- oplogReplay 
+
+
+updates operation on emp -- transaction at document level ; not have a exclusive lock on entire collection
+mongodump  lock intent exclusive ; shared lock ; 
+
+
+db.currentOp()
+
+
+1 min 10 min
+
+db.emp.insert([1000 docs])-- terminated ; {nInserted:}
+kill this op
+
+client app -- write op terminated err code 
+DBA
+
+dev --- > testing 
+dbs in dev --- > testing
+
+mongodump -db fujitsuDb --oplog -u --password
+
+copy the folders to the testing env test1
+
+In the testing env
+
+mongorestore /test1 --oplogReplay -u --password
+
+authentication  -- explicitly
+script1.sh
+
+default retention 
+mongodump -- folder 
+ops manager 
+
+backup -- everyday emp/12-01-2021
+
+retention period -- 7 days
+restore 1 month -- not possible
+
+
+emp backup  1000 docs  -- emp/12-12-2020
+after backup 10 docs -- deleted
+emp backup 13-12-2020
+10 docs were updated
+
+mongorestore /home/admin/Desktop/emp/12-12-2020 --db fujitsuDb --collection emp1
+
+sharding -- 
+
+replica set --
+mongodump from a sec replica
+Yes ---> sec has fully synced with primary
+hidden sec 
+
+10 to 11 report on db stats
+ops manager : -- chart -- export to a pdf 
+
+create a new user with role -- 50ms
+Level 2-- profiler --yes
+Level 1 -- 100ms -- no
+Level 1 -- 30ms --- yes
+
+dump server (4.2)
+
+restore server (3.4)
+
+dump(3.4)
+restore(4.2)
+
+text indexes >4.2 onwards
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
