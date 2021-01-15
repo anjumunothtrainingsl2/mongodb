@@ -1,0 +1,124 @@
+var myDb=db.getSiblingDB("fujitsuDb")
+var myCollList=myDb.getCollectionNames()
+for(var i=0;i< myCollList.length;i++){
+printjson(myCollList[i])}
+
+
+// show all the indexes in fujitsuDb
+var myDb=db.getSiblingDB("fujitsuDb")
+var myCollList=myDb.getCollectionNames()
+for(var i=0;i< myCollList.length;i++){
+var indexesInColl=db.myCollList[i].getIndexes()
+printjson(myCollList[i])
+printjson(indexesInColl)
+printjson("********")
+)}
+
+db.getCollectionNames().forEach(function(collection) {
+   indexes = db[collection].getIndexes();
+   print("Indexes for " + collection + ":");
+   printjson(indexes);
+});
+
+
+
+mongo --eval "printjson(db.serverStatus().mem)"
+
+Create a .js file as part of /home/admin
+
+mongo fujitsuDb sampleScript1.js
+
+var memDetails=db.serverStatus().mem
+if (memDetails.resident >memDetails.virtual){
+	printjson("Memory is very low")}
+  
+  
+replication lag
+
+var statusVar=rs.status();
+var targetHost;
+for(var i=0;i<statusVar.members.length;i++){
+if(statusVar.members[i].stateStr ==2){
+	targetHost=statisVar[i].members[i].host
+  break;
+}
+}
+exit
+mongo --host targetHost
+var result=rs.printSlaveReplicationInfo()
+printjson(result)
+
+
+db.local.oplog.stats()
+
+var actualStorageSize=db.local.rs.oplog.storageSize()
+if(actualStorageSize >= (.70*200*1024))
+	printjson("Oplog size warning")
+  
+
+var result=db.restaurant.createIndex({cuisine:1})
+if (result.ok == 1 ){
+	printjson("Index created successfully")
+else
+	printjson("Error creating the index")
+
+
+emp -- empId, empName, salary, deptId(foreign key)
+dept  -- deptId, deptName, location
+
+emp Coll
+empId
+empName
+salary
+dept{
+	deptId,deptName , location}
+} 
+
+
+customers -- custId name,address
+orders  -- orderId, custId, transactionAmt
+products  -- productId, productName, price
+
+
+customers coll:
+custId, name,address
+orders :[{orderId, transactionAmt},{orderId, custId, transactionAmt},{orderId, custId, transactionAmt}]
+
+products coll:
+products  -- productId, productName, price
+
+transaction coll:
+transactionId,orderId(referenced element),
+products:[{productId(referenced doc),quantity}]
+
+embedded doc
+referenced doc
+
+tools
+server 3t
+
+
+schema created
+
+migrations are completed
+during the migrations -- ops 
+migration of partial data
+
+transactions  -- log file 
+
+1. schema 
+2. entity relationship
+3. mappings in mongodb 
+4. 
+
+
+
+1 doc 
+50 fields
+embedded 
+
+
+
+
+
+
